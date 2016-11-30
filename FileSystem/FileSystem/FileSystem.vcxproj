@@ -18,6 +18,23 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="realOS_filesystem\src\block.cpp" />
+    <ClCompile Include="realOS_filesystem\src\blockdevice.cpp" />
+    <ClCompile Include="realOS_filesystem\src\filesystem.cpp" />
+    <ClCompile Include="realOS_filesystem\src\Folder.cpp" />
+    <ClCompile Include="realOS_filesystem\src\memblockdevice.cpp" />
+    <ClCompile Include="realOS_filesystem\src\node.cpp" />
+    <ClCompile Include="realOS_filesystem\src\shell.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="realOS_filesystem\src\block.h" />
+    <ClInclude Include="realOS_filesystem\src\blockdevice.h" />
+    <ClInclude Include="realOS_filesystem\src\filesystem.h" />
+    <ClInclude Include="realOS_filesystem\src\Folder.h" />
+    <ClInclude Include="realOS_filesystem\src\memblockdevice.h" />
+    <ClInclude Include="realOS_filesystem\src\node.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{C7053A3D-E94A-4A3F-B5BD-C9B1BC9564EA}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
@@ -145,23 +162,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\..\..\Downloads\realOS_filesystem\src\block.cpp" />
-    <ClCompile Include="..\..\..\Downloads\realOS_filesystem\src\blockdevice.cpp" />
-    <ClCompile Include="..\..\..\Downloads\realOS_filesystem\src\filesystem.cpp" />
-    <ClCompile Include="..\..\..\Downloads\realOS_filesystem\src\Folder.cpp" />
-    <ClCompile Include="..\..\..\Downloads\realOS_filesystem\src\memblockdevice.cpp" />
-    <ClCompile Include="..\..\..\Downloads\realOS_filesystem\src\node.cpp" />
-    <ClCompile Include="..\..\..\Downloads\realOS_filesystem\src\shell.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\..\..\Downloads\realOS_filesystem\src\block.h" />
-    <ClInclude Include="..\..\..\Downloads\realOS_filesystem\src\blockdevice.h" />
-    <ClInclude Include="..\..\..\Downloads\realOS_filesystem\src\filesystem.h" />
-    <ClInclude Include="..\..\..\Downloads\realOS_filesystem\src\Folder.h" />
-    <ClInclude Include="..\..\..\Downloads\realOS_filesystem\src\memblockdevice.h" />
-    <ClInclude Include="..\..\..\Downloads\realOS_filesystem\src\node.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

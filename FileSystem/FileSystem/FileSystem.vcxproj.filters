@@ -15,45 +15,45 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\Downloads\realOS_filesystem\src\shell.cpp">
+    <ClCompile Include="realOS_filesystem\src\block.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Downloads\realOS_filesystem\src\node.cpp">
+    <ClCompile Include="realOS_filesystem\src\blockdevice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Downloads\realOS_filesystem\src\memblockdevice.cpp">
+    <ClCompile Include="realOS_filesystem\src\filesystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Downloads\realOS_filesystem\src\Folder.cpp">
+    <ClCompile Include="realOS_filesystem\src\Folder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Downloads\realOS_filesystem\src\filesystem.cpp">
+    <ClCompile Include="realOS_filesystem\src\memblockdevice.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Downloads\realOS_filesystem\src\blockdevice.cpp">
+    <ClCompile Include="realOS_filesystem\src\node.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\Downloads\realOS_filesystem\src\block.cpp">
+    <ClCompile Include="realOS_filesystem\src\shell.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\Downloads\realOS_filesystem\src\node.h">
+    <ClInclude Include="realOS_filesystem\src\block.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Downloads\realOS_filesystem\src\memblockdevice.h">
+    <ClInclude Include="realOS_filesystem\src\blockdevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Downloads\realOS_filesystem\src\Folder.h">
+    <ClInclude Include="realOS_filesystem\src\filesystem.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Downloads\realOS_filesystem\src\filesystem.h">
+    <ClInclude Include="realOS_filesystem\src\Folder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Downloads\realOS_filesystem\src\blockdevice.h">
+    <ClInclude Include="realOS_filesystem\src\memblockdevice.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\Downloads\realOS_filesystem\src\block.h">
+    <ClInclude Include="realOS_filesystem\src\node.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
