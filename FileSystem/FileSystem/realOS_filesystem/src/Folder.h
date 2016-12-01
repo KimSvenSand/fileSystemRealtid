@@ -17,8 +17,9 @@ public:
 	string getName();
 	void setName(string newName);
 	void setParent(Folder * parent);
-	int getnrOfChildren();
+	int getnrOfFolders();
 	int getnrOfNodes();
+	Folder* getParent();
 
 	vector<Folder*> getFolders();
 	vector<Node*> getNodes();
@@ -27,7 +28,7 @@ private:
 	vector<Folder *> folders;
 	vector<Node *> nodes;
 	int nrOfNodes;
-	int nrOfChildren;
+	int nrOfFolders;
 	string name;
 };
 

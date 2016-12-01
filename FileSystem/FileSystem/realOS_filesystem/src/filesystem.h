@@ -10,6 +10,7 @@ private:
     MemBlockDevice mMemblockDevice;
 	Folder mFolder;
 	Folder * currentFolder;
+	Folder * homeFolder;
     // Here you can add your own data structures
 public:
     FileSystem();
@@ -34,6 +35,7 @@ public:
 
 	/* Function will move the current location to a specified location in the filesystem */
 	// goToFolder(...);
+	string goToFolder(string path);
 
 	/* This function will get all the files and folders in the specified folder */
 	// listDir(...);
