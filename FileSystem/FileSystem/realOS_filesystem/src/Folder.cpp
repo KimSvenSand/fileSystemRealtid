@@ -3,11 +3,14 @@
 Folder::Folder() {
 	this->name = "";
 	this->parent = nullptr;
+	this->nrOfFolders = 0;
+	this->nrOfNodes = 0;
 }
 
 Folder::Folder(string name, Folder * parent){
 	this->parent = parent;
 	this->nrOfFolders = 0;
+	this->nrOfNodes = 0;
 	this->name = name;
 }
 
@@ -20,8 +23,9 @@ void Folder::createFolder(string name){
 	this->nrOfFolders++;
 }
 
-void Folder::createNode(int sizeInBlocks, int blockNrs[]) {
-	this->nodes.push_back(new Node(sizeInBlocks, blockNrs));
+void Folder::createNode(string name, int blockNr) {
+	this->nodes.push_back(new Node(name, blockNr));
+	this->nrOfNodes++;
 }
 
 string Folder::getName(){
@@ -52,4 +56,25 @@ vector<Folder*> Folder::getFolders() {
 
 vector<Node*> Folder::getNodes() {
 	return nodes;
+}
+
+Folder* Folder::getFolder(string name) {
+	for (int i = 0; i < folders.size(); i++) {
+		if (folders[i]->getName() == name)
+		{
+			return folders[i];
+		}
+	}
+
+	return nullptr;
+}
+
+Node* Folder::getNode(string name) {
+	for (int i = 0; i < nodes.size(); i++) {
+		if (nodes[i]->getName() == name) {
+			return nodes[i];
+		}
+	}
+
+	return nullptr;
 }

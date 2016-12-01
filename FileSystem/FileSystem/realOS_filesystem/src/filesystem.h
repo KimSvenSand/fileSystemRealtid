@@ -8,9 +8,14 @@ class FileSystem
 {
 private:
     MemBlockDevice mMemblockDevice;
+	int blockMap[250];
 	Folder mFolder;
 	Folder * currentFolder;
 	Folder * homeFolder;
+
+	vector<string> parsePath(string path);
+	string getFileContent();
+	string getFileFromBlock(string stringFromBlock);
     // Here you can add your own data structures
 public:
     FileSystem();
@@ -23,9 +28,12 @@ public:
 
     /* This function creates a file in the filesystem */
     // createFile(...)
+	int createFile(string name, string path);
+
+	int readFile(string path);
 
     /* Creates a folder in the filesystem */
-	void createFolder(string name);
+	int createFolder(string name, string path);
 
 	/* Removes a file in the filesystem */
 	// removeFile(...);

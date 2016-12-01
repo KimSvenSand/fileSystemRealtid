@@ -2,23 +2,21 @@
 #include <iostream>
 
 Node::Node() {
-  this->size = 0;
-  this->blockNrs = NULL;  
+  this->blockNr = 0;  
 }
 
-Node::Node(int size, int blockNrs[]) {
-  this->size = size;
-  this->blockNrs = blockNrs;
+Node::Node(std::string name, int blockNr) {
+  this->blockNr = blockNr;
+  this->name = name;
 }
 
 Node::~Node() {
-  this->size = 0;
 }
 
-int Node::getSize() {
-  return this->size;
+int Node::getBlockNr() {
+  return this->blockNr;
 }
 
-int * Node::getBlockNrs() {
-  return this->blockNrs;
+std::string Node::getName() {
+	return this->name;
 }

@@ -13,13 +13,15 @@ public:
 	Folder(string name, Folder * parent);
 	~Folder();
 	void createFolder(string name);
-	void createNode(int sizeInBlocks, int blockNrs[]);
+	void createNode(string name, int blockNr);
 	string getName();
 	void setName(string newName);
 	void setParent(Folder * parent);
 	int getnrOfFolders();
 	int getnrOfNodes();
 	Folder* getParent();
+	Folder* getFolder(string name);
+	Node* getNode(string name);
 
 	vector<Folder*> getFolders();
 	vector<Node*> getNodes();

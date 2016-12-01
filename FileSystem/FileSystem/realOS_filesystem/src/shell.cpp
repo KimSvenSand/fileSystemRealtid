@@ -15,6 +15,8 @@ int parseCommandString(const std::string &userCommand, std::string strArr[]);
 int findCommand(std::string &command);
 std::string help();
 
+void resetArr(std::string strArr[]);
+
 int main(void) {
 
 	std::string userCommand, commandArr[MAXCOMMANDS];
@@ -47,8 +49,12 @@ int main(void) {
 				fileSystem.listDir();
                 break;
             case 3: // create
+				fileSystem.createFile(commandArr[1], commandArr[2]);
+				resetArr(commandArr);
                 break;
             case 4: // cat
+				fileSystem.readFile(commandArr[1]);
+				resetArr(commandArr);
                 break;
             case 5: // createImage
                 break;
@@ -63,10 +69,12 @@ int main(void) {
             case 10: // mv
                 break;
             case 11: // mkdir
-				fileSystem.createFolder(commandArr[1]);
+				fileSystem.createFolder(commandArr[1], commandArr[2]);
+				resetArr(commandArr);
                 break;
             case 12: // cd
 				currentDir = fileSystem.goToFolder(commandArr[1]);
+				resetArr(commandArr);
                 break;
             case 13: // pwd
                 break;
@@ -82,6 +90,12 @@ int main(void) {
     return 0;
 }
 
+void resetArr(std::string arr[]) {
+	for (int i = 0; i < MAXCOMMANDS; i++) {
+		arr[i] = "";
+	}
+}
+
 int parseCommandString(const std::string &userCommand, std::string strArr[]) {
     std::stringstream ssin(userCommand);
     int counter = 0;
@@ -94,6 +108,7 @@ int parseCommandString(const std::string &userCommand, std::string strArr[]) {
     }
     return counter;
 }
+
 int findCommand(std::string &command) {
     int index = -1;
     for (int i = 0; i < NUMAVAILABLECOMMANDS && index == -1; ++i) {

@@ -6,15 +6,15 @@
 
 class Node {
   private:
-    int size = 0;
-    int * blockNrs;
+    int blockNr;
+	std::string name;
   public:
     Node();
-    Node(int size, int blockNrs[]);
+    Node(std::string name, int blockNr);
     ~Node();
-
-    int getSize();
-    int * getBlockNrs();
+	
+	std::string getName();
+	int getBlockNr();
 };
 
 #endif //NODE_H
