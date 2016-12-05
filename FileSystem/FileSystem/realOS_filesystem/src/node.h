@@ -7,12 +7,14 @@
 class Node {
   private:
     int blockNr;
+	int size;
 	std::string name;
   public:
     Node();
-    Node(std::string name, int blockNr);
+    Node(std::string name, int size, int blockNr);
     ~Node();
 	
+	int getSize();
 	std::string getName();
 	int getBlockNr();
 };

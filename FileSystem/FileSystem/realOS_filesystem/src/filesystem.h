@@ -16,6 +16,8 @@ private:
 	vector<string> parsePath(string path);
 	string getFileContent();
 	string getFileFromBlock(string stringFromBlock);
+	bool hasSpace(size_t start, size_t size, int blockMap[]);
+	string FileSystem::getPathFromRoot(Folder* currentFolder);
     // Here you can add your own data structures
 public:
     FileSystem();
@@ -28,12 +30,12 @@ public:
 
     /* This function creates a file in the filesystem */
     // createFile(...)
-	int createFile(string name, string path);
+	int createFile(string path);
 
 	int readFile(string path);
 
     /* Creates a folder in the filesystem */
-	int createFolder(string name, string path);
+	int createFolder(string path);
 
 	/* Removes a file in the filesystem */
 	// removeFile(...);

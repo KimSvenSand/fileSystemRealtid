@@ -13,7 +13,7 @@ public:
 	Folder(string name, Folder * parent);
 	~Folder();
 	void createFolder(string name);
-	void createNode(string name, int blockNr);
+	void createNode(string name, int size, int blockNr);
 	string getName();
 	void setName(string newName);
 	void setParent(Folder * parent);

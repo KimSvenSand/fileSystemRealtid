@@ -22,7 +22,9 @@
     <ClCompile Include="realOS_filesystem\src\block.cpp" />
     <ClCompile Include="realOS_filesystem\src\blockdevice.cpp" />
     <ClCompile Include="realOS_filesystem\src\filesystem.cpp" />
-    <ClCompile Include="realOS_filesystem\src\Folder.cpp" />
+    <ClCompile Include="realOS_filesystem\src\Folder.cpp">
+      <PreprocessorDefinitions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
     <ClCompile Include="realOS_filesystem\src\memblockdevice.cpp" />
     <ClCompile Include="realOS_filesystem\src\node.cpp" />
     <ClCompile Include="realOS_filesystem\src\shell.cpp" />

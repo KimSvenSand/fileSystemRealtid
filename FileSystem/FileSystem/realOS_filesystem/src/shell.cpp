@@ -49,7 +49,7 @@ int main(void) {
 				fileSystem.listDir();
                 break;
             case 3: // create
-				fileSystem.createFile(commandArr[1], commandArr[2]);
+				fileSystem.createFile(commandArr[1]);
 				resetArr(commandArr);
                 break;
             case 4: // cat
@@ -69,7 +69,7 @@ int main(void) {
             case 10: // mv
                 break;
             case 11: // mkdir
-				fileSystem.createFolder(commandArr[1], commandArr[2]);
+				fileSystem.createFolder(commandArr[1]);
 				resetArr(commandArr);
                 break;
             case 12: // cd

@@ -23,8 +23,8 @@ void Folder::createFolder(string name){
 	this->nrOfFolders++;
 }
 
-void Folder::createNode(string name, int blockNr) {
-	this->nodes.push_back(new Node(name, blockNr));
+void Folder::createNode(string name, int size, int blockNr) {
+	this->nodes.push_back(new Node(name, size, blockNr));
 	this->nrOfNodes++;
 }
 
