@@ -17,7 +17,11 @@ private:
 	string getFileContent();
 	string getFileFromBlock(string stringFromBlock);
 	bool hasSpace(size_t start, size_t size, int blockMap[]);
-	string FileSystem::getPathFromRoot(Folder* currentFolder);
+	string getPathFromRoot(Folder* currentFolder);
+	string readFileContent(string path);
+	Folder* getFolderFromPath(vector<string> path);
+	Node* getNodeFromPath(vector<string> path);
+	int writeFile(string fileContent);
     // Here you can add your own data structures
 public:
     FileSystem();
@@ -32,10 +36,17 @@ public:
     // createFile(...)
 	int createFile(string path);
 
-	int readFile(string path);
+	//Read from file
+	void readFile(string path);
+
+	//Print path to current working directory
+	void printCurrentPath();
 
     /* Creates a folder in the filesystem */
 	int createFolder(string path);
+
+	//Append content of source to end of content of destination
+	void appendToFile(string source, string destination);
 
 	/* Removes a file in the filesystem */
 	// removeFile(...);

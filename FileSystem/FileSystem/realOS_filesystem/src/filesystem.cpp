@@ -1,4 +1,5 @@
 #include "filesystem.h"
+
 FileSystem::FileSystem() {
 	//Initiate file system with one home folder that is it's own parent.
 	this->mFolder.setName("/");
@@ -13,8 +14,54 @@ FileSystem::~FileSystem() {
 
 }
 
-//cat <path>
-int FileSystem::readFile(string path) {
+Folder* FileSystem::getFolderFromPath(vector<string> path) {
+	Folder* pathFolder = this->currentFolder;
+	
+	if (path.size() > 0) {
+		for (int i = 0; i < path.size(); i++) {
+			if (path[i] == "..") {
+				pathFolder = pathFolder->getParent();
+			}
+			else if (path[i] == ".") {
+
+			}
+			else if (path[i] == "") {
+				pathFolder = this->homeFolder;
+			}
+			else {
+				pathFolder = pathFolder->getFolder(path[i]);
+
+				if (pathFolder == nullptr) {
+					return nullptr;
+				}
+			}
+		}
+
+		return pathFolder;
+	}
+}
+
+Node* FileSystem::getNodeFromPath(vector<string> path) {
+	vector<string> folderPath = path;
+	Folder* folder = currentFolder;
+	Node* node = nullptr;
+
+	folderPath.pop_back();
+	if (folderPath.size() > 0) {
+		folder = this->getFolderFromPath(folderPath);
+	}
+
+	node = folder->getNode(path[path.size() - 1]);
+	if (node == nullptr) {
+		return nullptr;
+	}
+	//If node is found get file content and print.
+	else {
+		return node;
+	}
+}
+
+string FileSystem::readFileContent(string path) {
 	bool pathFound = true;
 	string fileContent = "";
 	Folder* pathFolder = this->currentFolder;
@@ -37,8 +84,7 @@ int FileSystem::readFile(string path) {
 				pathFolder = pathFolder->getFolder(parsedPath[i]);
 
 				if (pathFolder == nullptr) {
-					cout << "Error: invalid path" << endl;
-					return -1;
+					return "ERROR_1";
 				}
 			}
 		}
@@ -47,15 +93,101 @@ int FileSystem::readFile(string path) {
 	//Get node
 	fileNode = pathFolder->getNode(parsedPath[parsedPath.size() - 1]);
 	if (fileNode == nullptr) {
-		cout << "Error: invalid path" << endl;
-		return -1;
+		return "ERROR_1";
 	}
 	//If node is found get file content and print.
 	else {
 		for (size_t i = 0; i < fileNode->getSize(); i++) {
 			fileContent += mMemblockDevice.readBlock(fileNode->getBlockNr() + i).toString();
 		}
-		cout << this->getFileFromBlock(fileContent);
+		return this->getFileFromBlock(fileContent);
+	}
+}
+
+int FileSystem::writeFile(string fileContent) {
+	int size = 0;
+	vector<string> blockContent;
+	bool foundSpace = false;
+	int counter = 0;
+
+	size = fileContent.size() / 512 + 1;
+
+	for (int i = 0; i < size; i++) {
+		if (i < size - 1) {
+			blockContent.push_back(fileContent.substr(512 * i, 512));
+		}
+		else {
+			blockContent.push_back(fileContent.substr(512 * i));
+
+			while (blockContent[i].size() < 512) {
+				blockContent[i] += " ";
+			}
+		}
+	}
+
+	while (!foundSpace && counter < 511) {
+		while (this->blockMap[counter] == 1 && counter < 511) {
+			counter++;
+		}
+
+		foundSpace = this->hasSpace(counter, size, blockMap);
+	}
+
+	if (foundSpace) {
+		for (size_t i = 0; i < size; i++) {
+			bool wrote = this->mMemblockDevice.writeBlock(counter + i, blockContent[i]);
+
+			if (wrote) {
+				this->blockMap[counter + i] = 1;
+			}
+			else {
+				return -1;
+			}
+		}
+		return counter;
+	}
+	else {
+		return -1;
+	}
+}
+
+//cat <path>
+void FileSystem::readFile(string path) {
+	string fileContent = this->readFileContent(path);
+	if (fileContent != "ERROR_1") {
+		cout << fileContent << endl;
+	}
+	else {
+		cout << "Error: invalid path " + path << endl;
+	}
+}
+
+//Append <source> <destination>
+void FileSystem::appendToFile(string source, string destination) {
+	string sourceContent = this->readFileContent(source);
+	string destContent = this->readFileContent(destination);
+	Node* destNode = this->getNodeFromPath(this->parsePath(destination));
+
+	if (sourceContent != "ERROR_!" && destNode != nullptr) {
+		string newContent = "";
+		int blockNr = 0;
+
+		for (size_t i = 0; i < destNode->getSize(); i++) {
+			blockMap[destNode->getBlockNr() + i] = 0;
+		}
+
+		newContent = destContent + sourceContent + "\n:q";
+		blockNr = this->writeFile(newContent);
+		destNode->setBlockNr(blockNr);
+	}
+	else {
+		if (sourceContent == "ERROR_1") {
+			cout << "Error: invalid path " + source;
+		}
+
+		if (destNode == nullptr) {
+			cout << "Error: invalid path " + destination;
+		}
 	}
 }
 
@@ -141,7 +273,12 @@ int FileSystem::createFile(string path) {
 
 bool FileSystem::hasSpace(size_t start, size_t size, int blockMap[]) {
 	for (size_t i = 0; i < size; i++) {
-		if (blockMap[start + i] != 0) {
+		if (start + i < 512) {
+			if (blockMap[start + i] != 0) {
+				return false;
+			}
+		}
+		else {
 			return false;
 		}
 	}
@@ -339,6 +476,7 @@ string FileSystem::getFileFromBlock(string stringFromBlock) {
 			tmp += stringFromBlock[i + 1];
 			tmp += stringFromBlock[i + 2];
 			if (tmp == "q ") {
+				mainContent.pop_back();
 				return mainContent;
 			}
 		}
@@ -347,4 +485,8 @@ string FileSystem::getFileFromBlock(string stringFromBlock) {
 	}
 
 	return mainContent;
+}
+
+void FileSystem::printCurrentPath() {
+	cout << this->getPathFromRoot(this->currentFolder) << endl;
 }

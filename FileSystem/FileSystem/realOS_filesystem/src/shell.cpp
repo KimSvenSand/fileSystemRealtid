@@ -65,6 +65,8 @@ int main(void) {
             case 8: // cp
                 break;
             case 9: // append
+				fileSystem.appendToFile(commandArr[1], commandArr[2]);
+				resetArr(commandArr);
                 break;
             case 10: // mv
                 break;
@@ -77,6 +79,7 @@ int main(void) {
 				resetArr(commandArr);
                 break;
             case 13: // pwd
+				fileSystem.printCurrentPath();
                 break;
             case 14: // help
                 std::cout << help() << std::endl;

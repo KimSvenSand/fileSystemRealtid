@@ -17,6 +17,7 @@ class Node {
 	int getSize();
 	std::string getName();
 	int getBlockNr();
+	void setBlockNr(int blockNr);
 };
 
 #endif //NODE_H

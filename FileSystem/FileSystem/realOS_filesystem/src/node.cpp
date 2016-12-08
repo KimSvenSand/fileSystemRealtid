@@ -26,3 +26,7 @@ int Node::getSize() {
 std::string Node::getName() {
 	return this->name;
 }
+
+void Node::setBlockNr(int blockNr) {
+	this->blockNr = blockNr;
+}
