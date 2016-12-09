@@ -42,6 +42,7 @@ int main(void) {
                 std::cout << "Exiting\n";
                 break;
             case 1: // format
+				fileSystem.formatDisk();
                 // Call fileSystem.format()
                 break;
             case 2: // ls
@@ -57,8 +58,12 @@ int main(void) {
 				resetArr(commandArr);
                 break;
             case 5: // createImage
+				fileSystem.createImage(commandArr[1]);
+				resetArr(commandArr);
                 break;
             case 6: // restoreImage
+				fileSystem.restoreImage(commandArr[1]);
+				resetArr(commandArr);
                 break;
             case 7: // rm
 				fileSystem.removeFile(commandArr[1]);

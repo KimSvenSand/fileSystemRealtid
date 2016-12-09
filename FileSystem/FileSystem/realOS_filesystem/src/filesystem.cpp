@@ -2,16 +2,12 @@
 
 FileSystem::FileSystem() {
 	//Initiate file system with one home folder that is it's own parent.
-	this->mFolder.setName("/");
-	this->mFolder.setParent(&mFolder);
-	this->currentFolder = &this->mFolder;
-
-	//Pointer to the "home" folder.
-	this->homeFolder = &this->mFolder;
+	this->homeFolder = new Folder("/", this->homeFolder);
+	this->currentFolder = this->homeFolder;
 }
 
 FileSystem::~FileSystem() {
-
+	delete this->homeFolder;
 }
 
 //Get folder pointer from path. Returns nullptr if invalid path, returns current folder if path is empty.
@@ -197,6 +193,39 @@ void FileSystem::appendToFile(string source, string destination) {
 	}
 }
 
+int FileSystem::restoreFile(string path, string fileContent) {
+	int size = 0;
+	int blockNr = 0;
+	Folder * pathFolder = this->currentFolder;
+	vector<string> parsedPath = this->parsePath(path);
+	vector<string> folderPath = parsedPath;
+
+	folderPath.pop_back();
+	pathFolder = this->getFolderFromPath(folderPath);
+
+	for (int k = 0; k < pathFolder->getnrOfNodes(); k++) {
+		if (pathFolder->getNodes()[k]->getName() == parsedPath[parsedPath.size() - 1]) {
+			cout << "Error: File already exists" << endl;
+			return -1;
+		}
+	}
+
+	size = fileContent.size() / 512 + 1;
+	blockNr = this->writeFile(fileContent, size);
+
+	if (blockNr >= 0) {
+		pathFolder->createNode(parsedPath[parsedPath.size() - 1], size, blockNr);
+	}
+	else {
+		if (blockNr == -1) {
+			cout << "Error: Failed to write" << endl;
+		}
+		else if (blockNr == -2) {
+			cout << "Error: No free space available" << endl;
+		}
+	}
+}
+
 //Create <filename>
 int FileSystem::createFile(string path) {
 	int size = 0;
@@ -260,6 +289,10 @@ void FileSystem::moveFile(string oldPath, string newPath) {
 	}
 }
 
+void FileSystem::copyFile(string source, string destination) {
+
+}
+
 void FileSystem::removeFile(string path) {
 	vector<string> parsedPath = this->parsePath(path);
 	Node* node = this->getNodeFromPath(parsedPath);
@@ -269,6 +302,10 @@ void FileSystem::removeFile(string path) {
 	folder = this->getFolderFromPath(parsedPath);
 
 	if (node != nullptr) {
+		for (size_t i = 0; i < node->getSize(); i++) {
+			this->blockMap[node->getBlockNr() + i] = 0;
+		}
+
 		folder->deleteNode(node);
 	}
 	else {
@@ -316,45 +353,23 @@ int FileSystem::createFolder(string path) {
 	bool pathFound = true;
 	Folder* pathFolder = this->currentFolder;
 	vector<string> parsedPath = this->parsePath(path);
+	string newFolder = parsedPath[parsedPath.size() - 1];
+	
+	parsedPath.pop_back();
+	pathFolder = this->getFolderFromPath(parsedPath);
 
-	if (parsedPath.size() - 1 > 0) {
-		for (int i = 0; i < parsedPath.size() - 1; i++) {
-			if (parsedPath[i] == "..") {
-				pathFolder = pathFolder->getParent();
-			} 
-			else if (parsedPath[i] == ".") {
-				
-			} 
-			else if (parsedPath[i] == "") {
-				pathFolder = this->homeFolder;
-			}
-			else {
-				for (int k = 0; k < pathFolder->getnrOfFolders(); k++) {
-					pathFound = false;
-
-					if (pathFolder->getFolders()[k]->getName() == parsedPath[i]) {
-						pathFolder = pathFolder->getFolders()[k];
-						pathFound = true;
-					}
-				}
-				if (!pathFound) {
-					cout << "Error: Invalid path" << endl;
-					return -1;
-				}
-			}
+	if (pathFolder != nullptr) {
+		if (pathFolder->getFolder(newFolder) == nullptr) {
+			pathFolder->createFolder(newFolder);
 		}
-	}
-
-	for (int k = 0; k < pathFolder->getnrOfFolders(); k++) {
-		pathFound = false;
-
-		if (pathFolder->getFolders()[k]->getName() == parsedPath[parsedPath.size() - 1]) {
+		else {
 			cout << "Error: Folder already exists" << endl;
 			return -1;
 		}
 	}
-
-	pathFolder->createFolder(parsedPath[parsedPath.size() - 1]);
+	else {
+		cout << "Error: invalid path" << endl;
+	}
 }
 
 //ls
@@ -419,7 +434,7 @@ string FileSystem::goToFolder(string path) {
 		}
 	}
 
-	return getPathFromRoot(this->currentFolder);
+	return getPathFromRoot(this->currentFolder) + "/";
 }
 
 string FileSystem::getPathFromRoot(Folder* currentFolder) {
@@ -437,8 +452,8 @@ string FileSystem::getPathFromRoot(Folder* currentFolder) {
 		tmp = currentFolder->getParent();
 	}
 
-	if (path[path.size() - 1] != '/') {
-		path += "/";
+	if (path == "/") {
+		return "";
 	}
 
 	return path;
@@ -493,5 +508,133 @@ string FileSystem::getFileFromBlock(string stringFromBlock) {
 }
 
 void FileSystem::printCurrentPath() {
-	cout << this->getPathFromRoot(this->currentFolder) << endl;
+	cout << this->getPathFromRoot(this->currentFolder) + "/" << endl;
+}
+
+int FileSystem::createImage(string realFile) {
+	Folder* current = this->homeFolder;
+	ofstream out;
+
+	out.open(realFile);
+
+	out << "folders:" << endl;
+	out << this->getFolderString(this->homeFolder) << endl;
+	out << "nodes:" << endl;
+	out << this->getNodeString(this->homeFolder) << endl;
+
+	out.close();
+	return 0;
+}
+
+int FileSystem::restoreImage(string realFile) {
+	string str, line, path;
+	ifstream in;
+	vector<string> parsedPath;
+	int size;
+	int blockNr;
+
+	//Open file
+	in.open(realFile);
+
+	//Read first line
+	in >> line;
+	//Read in folders
+	if (line == "folders:") {
+		cout << "Creating folders" << endl;
+		in >> line;
+		while (line != "nodes:" || in.eof()) {
+			cout << line << endl;
+			this->createFolder(line);
+			in >> line;
+		}
+		//Read in nodes
+		in >> line;
+		cout << endl << "Creating files" << endl;
+		while (!in.eof()) {
+			//If line is a path save path in path
+			if (line[0] == '/') {
+				path = line;
+				in >> line;
+			}
+			//If not a path, it's content. Collect content in str and create file.
+			else {
+				str = "";
+
+				while (line != ":q") {
+					str += line + " ";
+					in >> line;
+				}
+
+				str += "\n" + line;
+				this->restoreFile(path, str);
+				
+				cout << path << endl;
+				in >> line;
+			}
+		}
+	}
+	else {
+		cout << "Error: Invalid image" << endl;
+	}
+
+	in.close();
+	return 0;
+}
+
+string FileSystem::getFolderString(Folder* folder) {
+	string folderString = "";
+
+	for (size_t i = 0; i < folder->getFolders().size(); i++) {
+		folderString += this->getPathFromRoot(folder->getFolders()[i]) + "\n";
+		folderString += this->getFolderString(folder->getFolders()[i]);
+	}
+
+	//folderString.pop_back();
+	return folderString;
+}
+
+string FileSystem::getNodeString(Folder* folder) {
+	string nodeString = "";
+	string tmpPath = "";
+
+	for (size_t k = 0; k < folder->getNodes().size(); k++) {
+		tmpPath = this->getPathFromRoot(folder) + "/" + folder->getNodes()[k]->getName();
+		nodeString += tmpPath + "\n";
+		nodeString += folder->getNodes()[k]->getSize() + "\n";
+		nodeString += folder->getNodes()[k]->getSize() + "\n";
+		nodeString += this->readFileContent(tmpPath) + "\n:q\n";
+	}
+
+	for (size_t i = 0; i < folder->getFolders().size(); i++) {
+		nodeString += this->getNodeString(folder->getFolders()[i]);
+	}
+
+	//nodeString.pop_back();
+	return nodeString;
+}
+
+string FileSystem::getBlockMapString() {
+	string blockMapString = "";
+
+	for (size_t i = 0; i < this->memBlockSize; i++) {
+		blockMapString += to_string(this->blockMap[i]);
+	}
+
+	return blockMapString;
+}
+
+string FileSystem::getBlocksString() {
+	string blocksString = "";
+
+	return blocksString;
+}
+
+void FileSystem::formatDisk() {
+	for (size_t i = 0; i < this->memBlockSize; i++) {
+		this->blockMap[i] = 0;
+	}
+
+	delete this->homeFolder;
+	this->homeFolder = new Folder("/", this->homeFolder);
+	this->currentFolder = this->homeFolder;
 }

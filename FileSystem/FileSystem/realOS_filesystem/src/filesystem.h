@@ -1,6 +1,8 @@
 #ifndef FILESYSTEM_H
 #define FILESYSTEM_H
 
+#include<iostream>
+#include<fstream>
 #include "Folder.h"
 #include "memblockdevice.h"
 
@@ -9,7 +11,7 @@ class FileSystem
 private:
     MemBlockDevice mMemblockDevice;
 	int blockMap[250];
-	Folder mFolder;
+	int memBlockSize = 250;
 	Folder * currentFolder;
 	Folder * homeFolder;
 
@@ -22,6 +24,11 @@ private:
 	Folder* getFolderFromPath(vector<string> path);
 	Node* getNodeFromPath(vector<string> path);
 	int writeFile(string fileContent, int size);
+	string getFolderString(Folder* folder);
+	string getNodeString(Folder* folder);
+	string getBlockMapString();
+	string getBlocksString();
+	int restoreFile(string path, string fileContent);
     // Here you can add your own data structures
 public:
     FileSystem();
@@ -53,6 +60,13 @@ public:
 
 	//Remove file
 	void removeFile(string path);
+
+	void copyFile(string source, string destination);
+
+	int createImage(string realPath);
+	int restoreImage(string realFile);
+
+	void formatDisk();
 
 	/* Removes a file in the filesystem */
 	// removeFile(...);
