@@ -51,6 +51,9 @@ public:
 	//Move file
 	void moveFile(string oldPath, string newPath);
 
+	//Remove file
+	void removeFile(string path);
+
 	/* Removes a file in the filesystem */
 	// removeFile(...);
 

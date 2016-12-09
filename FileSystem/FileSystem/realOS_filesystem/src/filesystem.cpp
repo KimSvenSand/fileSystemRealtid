@@ -260,6 +260,22 @@ void FileSystem::moveFile(string oldPath, string newPath) {
 	}
 }
 
+void FileSystem::removeFile(string path) {
+	vector<string> parsedPath = this->parsePath(path);
+	Node* node = this->getNodeFromPath(parsedPath);
+	Folder* folder = nullptr;
+	
+	parsedPath.pop_back();
+	folder = this->getFolderFromPath(parsedPath);
+
+	if (node != nullptr) {
+		folder->deleteNode(node);
+	}
+	else {
+		cout << "Error: invalid path" << endl;
+	}
+}
+
 bool FileSystem::hasSpace(size_t start, size_t size, int blockMap[]) {
 	for (size_t i = 0; i < size; i++) {
 		if (start + i < 512) {

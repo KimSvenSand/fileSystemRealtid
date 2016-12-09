@@ -61,6 +61,8 @@ int main(void) {
             case 6: // restoreImage
                 break;
             case 7: // rm
+				fileSystem.removeFile(commandArr[1]);
+				resetArr(commandArr);
                 break;
             case 8: // cp
                 break;
