@@ -1,0 +1,13 @@
+folders:
+/hej
+/hej/d„r
+/tja
+
+nodes:
+/file1
+I'm file 1 
+:q
+/tja/file2
+I'm file2 and I'm in the directory tja! 
+:q
+

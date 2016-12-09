@@ -10,79 +10,54 @@ class FileSystem
 {
 private:
     MemBlockDevice mMemblockDevice;
-	int blockMap[250];
-	int memBlockSize = 250;
+	int blockMap[250]; //For keeping track of free space
+	int memBlockSize = 250; 
 	Folder * currentFolder;
 	Folder * homeFolder;
 
 	vector<string> parsePath(string path);
-	string getFileContent();
-	string getFileFromBlock(string stringFromBlock);
-	bool hasSpace(size_t start, size_t size, int blockMap[]);
-	string getPathFromRoot(Folder* currentFolder);
-	string readFileContent(string path);
-	Folder* getFolderFromPath(vector<string> path);
+	string getFileContent(); //Get content from user
+	string getFileFromBlock(string stringFromBlock); //Get file content as string from blockContent
+	bool hasSpace(size_t start, size_t size, int blockMap[]); //Find free space
+	string getPathFromRoot(Folder* currentFolder); //Get cwr path from root
+	string readFileContent(string path); //Get filecontent from a file in a string
+	Folder* getFolderFromPath(vector<string> path); 
 	Node* getNodeFromPath(vector<string> path);
-	int writeFile(string fileContent, int size);
-	string getFolderString(Folder* folder);
+	int writeFile(string fileContent, int size); //Write filecontent to memblock. Returns blockNr.
+	string getFolderString(Folder* folder); //Get string of folder paths. For writing to image.
 	string getNodeString(Folder* folder);
-	string getBlockMapString();
-	string getBlocksString();
-	int restoreFile(string path, string fileContent);
-    // Here you can add your own data structures
+	int restoreFile(string path, string fileContent); //Restores a file from path and content. 
 public:
     FileSystem();
     ~FileSystem();
 
-    /* These commands needs to implemented
-     *
-     * However, you are free to change the parameterlist and specify your own returntype for each function below.
-     */
-
-    /* This function creates a file in the filesystem */
-    // createFile(...)
+	//create <path>
 	int createFile(string path);
-
-	//Read from file
+	//cat <path>
 	void readFile(string path);
-
-	//Print path to current working directory
+	//pwd
 	void printCurrentPath();
-
-    /* Creates a folder in the filesystem */
+	//mkdir <path>
 	int createFolder(string path);
-
 	//Append content of source to end of content of destination
+	//append <source> <destination>
 	void appendToFile(string source, string destination);
-
-	//Move file
+	//mv <source> <destination>
 	void moveFile(string oldPath, string newPath);
-
-	//Remove file
+	//rm <file-path>
 	void removeFile(string path);
-
+	//cp <source> <destination>
 	void copyFile(string source, string destination);
-
-	int createImage(string realPath);
-	int restoreImage(string realFile);
-
+	//createImage <real-file>
+	void createImage(string realPath);
+	//restoreImage <real-file>
+	void restoreImage(string realFile);
+	//format
 	void formatDisk();
-
-	/* Removes a file in the filesystem */
-	// removeFile(...);
-
-	/* Removes a folder in the filesystem */
-	// removeFolder(...);
-
-	/* Function will move the current location to a specified location in the filesystem */
-	// goToFolder(...);
+	//cd <path>
 	string goToFolder(string path);
-
-	/* This function will get all the files and folders in the specified folder */
-	// listDir(...);
+	//ls
 	void listDir();
-
-    /* Add your own member-functions if needed */
 };
 
 #endif // FILESYSTEM_H

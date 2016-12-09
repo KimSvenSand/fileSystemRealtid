@@ -30,3 +30,7 @@ std::string Node::getName() {
 void Node::setBlockNr(int blockNr) {
 	this->blockNr = blockNr;
 }
+
+void Node::setSize(int size) {
+	this->size = size;
+}

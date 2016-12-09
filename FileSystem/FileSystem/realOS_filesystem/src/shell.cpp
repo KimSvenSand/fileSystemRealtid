@@ -70,6 +70,8 @@ int main(void) {
 				resetArr(commandArr);
                 break;
             case 8: // cp
+				fileSystem.copyFile(commandArr[1], commandArr[2]);
+				resetArr(commandArr);
                 break;
             case 9: // append
 				fileSystem.appendToFile(commandArr[1], commandArr[2]);
