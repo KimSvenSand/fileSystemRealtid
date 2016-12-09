@@ -78,3 +78,15 @@ Node* Folder::getNode(string name) {
 
 	return nullptr;
 }
+
+//Deletes node from nodes. Returns -1 if it fails.
+int Folder::deleteNode(Node* node) {
+	for (size_t i = 0; i < this->nodes.size(); i++) {
+		if (this->nodes[i] == node) {
+			this->nodes.erase(this->nodes.begin() + i);
+			return 0;
+		}
+	}
+
+	return -1;
+};

@@ -25,6 +25,7 @@ public:
 
 	vector<Folder*> getFolders();
 	vector<Node*> getNodes();
+	int deleteNode(Node* node);
 private:
 	Folder *parent;
 	vector<Folder *> folders;

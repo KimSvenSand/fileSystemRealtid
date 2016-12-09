@@ -21,7 +21,7 @@ private:
 	string readFileContent(string path);
 	Folder* getFolderFromPath(vector<string> path);
 	Node* getNodeFromPath(vector<string> path);
-	int writeFile(string fileContent);
+	int writeFile(string fileContent, int size);
     // Here you can add your own data structures
 public:
     FileSystem();
@@ -47,6 +47,9 @@ public:
 
 	//Append content of source to end of content of destination
 	void appendToFile(string source, string destination);
+
+	//Move file
+	void moveFile(string oldPath, string newPath);
 
 	/* Removes a file in the filesystem */
 	// removeFile(...);

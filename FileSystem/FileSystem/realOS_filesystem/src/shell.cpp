@@ -69,6 +69,8 @@ int main(void) {
 				resetArr(commandArr);
                 break;
             case 10: // mv
+				fileSystem.moveFile(commandArr[1], commandArr[2]);
+				resetArr(commandArr);
                 break;
             case 11: // mkdir
 				fileSystem.createFolder(commandArr[1]);

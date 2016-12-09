@@ -14,6 +14,7 @@ FileSystem::~FileSystem() {
 
 }
 
+//Get folder pointer from path. Returns nullptr if invalid path, returns current folder if path is empty.
 Folder* FileSystem::getFolderFromPath(vector<string> path) {
 	Folder* pathFolder = this->currentFolder;
 	
@@ -39,25 +40,30 @@ Folder* FileSystem::getFolderFromPath(vector<string> path) {
 
 		return pathFolder;
 	}
+
+	return this->currentFolder;
 }
 
 Node* FileSystem::getNodeFromPath(vector<string> path) {
 	vector<string> folderPath = path;
-	Folder* folder = currentFolder;
+	Folder* folder = this->currentFolder;
 	Node* node = nullptr;
 
 	folderPath.pop_back();
-	if (folderPath.size() > 0) {
-		folder = this->getFolderFromPath(folderPath);
-	}
+	folder = this->getFolderFromPath(folderPath);
 
-	node = folder->getNode(path[path.size() - 1]);
-	if (node == nullptr) {
-		return nullptr;
+	if (folder != nullptr) {
+		node = folder->getNode(path[path.size() - 1]);
+		if (node == nullptr) {
+			return nullptr;
+		}
+		//If node is found get file content and print.
+		else {
+			return node;
+		}
 	}
-	//If node is found get file content and print.
 	else {
-		return node;
+		return nullptr;
 	}
 }
 
@@ -104,13 +110,11 @@ string FileSystem::readFileContent(string path) {
 	}
 }
 
-int FileSystem::writeFile(string fileContent) {
-	int size = 0;
+//Write file to memBlocks. Returns -1 if failed to write and returns -2 if no space was found.
+int FileSystem::writeFile(string fileContent, int size) {
 	vector<string> blockContent;
 	bool foundSpace = false;
 	int counter = 0;
-
-	size = fileContent.size() / 512 + 1;
 
 	for (int i = 0; i < size; i++) {
 		if (i < size - 1) {
@@ -147,7 +151,7 @@ int FileSystem::writeFile(string fileContent) {
 		return counter;
 	}
 	else {
-		return -1;
+		return -2;
 	}
 }
 
@@ -171,13 +175,15 @@ void FileSystem::appendToFile(string source, string destination) {
 	if (sourceContent != "ERROR_!" && destNode != nullptr) {
 		string newContent = "";
 		int blockNr = 0;
+		int size = 0;
 
 		for (size_t i = 0; i < destNode->getSize(); i++) {
 			blockMap[destNode->getBlockNr() + i] = 0;
 		}
 
 		newContent = destContent + sourceContent + "\n:q";
-		blockNr = this->writeFile(newContent);
+		size = newContent.size() / 512 + 1;
+		blockNr = this->writeFile(newContent, size);
 		destNode->setBlockNr(blockNr);
 	}
 	else {
@@ -193,44 +199,15 @@ void FileSystem::appendToFile(string source, string destination) {
 
 //Create <filename>
 int FileSystem::createFile(string path) {
-	bool pathFound = true;
-	bool foundSpace = false;
-	int counter = 0;
 	int size = 0;
+	int blockNr = 0;
 	string fileContent = "";
-	vector<string> blockContent;
-	char* cpPtr;
 	Folder * pathFolder = this->currentFolder;
 	vector<string> parsedPath = this->parsePath(path);
+	vector<string> folderPath = parsedPath;
 
-	if (parsedPath.size() - 1 > 0) {
-		for (int i = 0; i < parsedPath.size() - 1; i++) {
-			if (parsedPath[i] == "..") {
-				pathFolder = pathFolder->getParent();
-			}
-			else if (parsedPath[i] == ".") {
-
-			}
-			else if (parsedPath[i] == "") {
-				pathFolder = this->homeFolder;
-			}
-			else {
-				for (int k = 0; k < pathFolder->getnrOfFolders(); k++) {
-					pathFound = false;
-
-					if (pathFolder->getFolders()[k]->getName() == parsedPath[i]) {
-						pathFolder = pathFolder->getFolders()[k];
-						pathFound = true;
-					}
-				}
-
-				if (!pathFound) {
-					cout << "Error: invalid path" << endl;
-					return -1;
-				}
-			}
-		}
-	}
+	folderPath.pop_back();
+	pathFolder = this->getFolderFromPath(folderPath);
 	
 	for (int k = 0; k < pathFolder->getnrOfNodes(); k++) {
 		if (pathFolder->getNodes()[k]->getName() == parsedPath[parsedPath.size() - 1]) {
@@ -240,35 +217,47 @@ int FileSystem::createFile(string path) {
 	}
 
 	fileContent = this->getFileContent();
+
 	size = fileContent.size() / 512 + 1;
+	blockNr = this->writeFile(fileContent, size);
 
-	for (int i = 0; i < size; i++) {
-		if (i < size - 1) {
-			blockContent.push_back(fileContent.substr(512 * i, 512));
+	if (blockNr >= 0) {
+		pathFolder->createNode(parsedPath[parsedPath.size() - 1], size, blockNr);
+	}
+	else {
+		if (blockNr == -1) {
+			cout << "Error: Failed to write" << endl;
 		}
-		else {
-			blockContent.push_back(fileContent.substr(512 * i));
-
-			while (blockContent[i].size() < 512) {
-				blockContent[i] += " ";
-			}
+		else if (blockNr == -2) {
+			cout << "Error: No free space available" << endl;
 		}
 	}
+}
 
-	while (!foundSpace) {
-		while (this->blockMap[counter] == 1) {
-			counter++;
+void FileSystem::moveFile(string oldPath, string newPath) {
+	Node* oldNode = this->getNodeFromPath(this->parsePath(oldPath));
+	vector<string> newFolderPath = this->parsePath(newPath);
+	string newName = newFolderPath[newFolderPath.size() - 1];
+	vector<string> oldFolderPath = this->parsePath(oldPath);
+	Folder* newFolder = nullptr;
+
+	newFolderPath.pop_back();
+	oldFolderPath.pop_back();
+	newFolder = this->getFolderFromPath(newFolderPath);
+
+	if (oldNode != nullptr && newFolder != nullptr) {
+		newFolder->createNode(newName, oldNode->getSize(), oldNode->getBlockNr());
+
+		this->getFolderFromPath(oldFolderPath)->deleteNode(oldNode);
+	}
+	else {
+		if (oldNode == nullptr) {
+			cout << "Error: invalid path " + oldPath << endl;
 		}
-
-		foundSpace = this->hasSpace(counter, size, blockMap);
+		if (newFolder == nullptr) {
+			cout << "Error: invalid path " + newPath << endl;
+		}
 	}
-
-	for (size_t i = 0; i < size; i++) {
-		this->mMemblockDevice.writeBlock(counter + i, blockContent[i]);
-		this->blockMap[counter + i] = 1;
-	}
-
-	pathFolder->createNode(parsedPath[parsedPath.size() - 1], size, counter);
 }
 
 bool FileSystem::hasSpace(size_t start, size_t size, int blockMap[]) {
@@ -383,7 +372,7 @@ string FileSystem::goToFolder(string path) {
 		this->currentFolder = this->homeFolder;
 	}
 	//Check all letters
-	for (int i = 0; i < parsedPath.size(); i++) {
+	for (size_t i = 0; i < parsedPath.size(); i++) {
 		foundFolder = false;
 
 		if (parsedPath[i] == "..") {
@@ -448,7 +437,7 @@ vector<string> FileSystem::parsePath(string path) {
 			path += "/";
 		}
 
-		for (int i = 0; i < path.size(); i++) {
+		for (size_t i = 0; i < path.size(); i++) {
 			//Save path in tmp variable
 			if (path[i] != '/') {
 				tmp += path[i];
