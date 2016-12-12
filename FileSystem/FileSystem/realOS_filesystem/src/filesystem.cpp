@@ -211,7 +211,7 @@ int FileSystem::restoreFile(string path, string fileContent) {
 }
 
 //Create <filename>
-int FileSystem::createFile(string path) {
+void FileSystem::createFile(string path) {
 	int size = 0;
 	int blockNr = 0;
 	string fileContent = "";
@@ -225,7 +225,6 @@ int FileSystem::createFile(string path) {
 	for (int k = 0; k < pathFolder->getnrOfNodes(); k++) {
 		if (pathFolder->getNodes()[k]->getName() == parsedPath[parsedPath.size() - 1]) {
 			cout << "Error: File already exists" << endl;
-			return -1;
 		}
 	}
 
@@ -370,7 +369,7 @@ string FileSystem::getFileContent() {
 }
 
 //mkdir <folderName>
-int FileSystem::createFolder(string path) {
+void FileSystem::createFolder(string path) {
 	bool pathFound = true;
 	Folder* pathFolder = this->currentFolder;
 	vector<string> parsedPath = this->parsePath(path);
@@ -385,7 +384,6 @@ int FileSystem::createFolder(string path) {
 		}
 		else {
 			cout << "Error: Folder already exists" << endl;
-			return -1;
 		}
 	}
 	else {

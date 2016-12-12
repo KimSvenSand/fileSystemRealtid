@@ -32,13 +32,13 @@ public:
     ~FileSystem();
 
 	//create <path>
-	int createFile(string path);
+	void createFile(string path);
 	//cat <path>
 	void readFile(string path);
 	//pwd
 	void printCurrentPath();
 	//mkdir <path>
-	int createFolder(string path);
+	void createFolder(string path);
 	//Append content of source to end of content of destination
 	//append <source> <destination>
 	void appendToFile(string source, string destination);
