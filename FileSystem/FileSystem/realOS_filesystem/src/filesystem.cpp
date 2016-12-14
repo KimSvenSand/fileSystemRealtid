@@ -17,7 +17,7 @@ Folder* FileSystem::getFolderFromPath(vector<string> path) {
 	Folder* pathFolder = this->currentFolder;
 	
 	if (path.size() > 0) {
-		for (int i = 0; i < path.size(); i++) {
+		for (size_t i = 0; i < path.size(); i++) {
 			if (path[i] == "..") {
 				pathFolder = pathFolder->getParent();
 			}
@@ -75,7 +75,7 @@ string FileSystem::readFileContent(string path) {
 	}
 	//If node is found get file content and print.
 	else {
-		for (size_t i = 0; i < fileNode->getSize(); i++) {
+		for (int i = 0; i < fileNode->getSize(); i++) {
 			fileContent += mMemblockDevice.readBlock(fileNode->getBlockNr() + i).toString();
 		}
 		return this->getFileFromBlock(fileContent);
@@ -114,8 +114,8 @@ int FileSystem::writeFile(string fileContent, int size) {
 	}
 
 	if (foundSpace) {
-		for (size_t i = 0; i < size; i++) {
-			bool wrote = this->mMemblockDevice.writeBlock(counter + i, blockContent[i]);
+		for (int i = 0; i < size; i++) {
+			int wrote = this->mMemblockDevice.writeBlock(counter + i, blockContent[i]);
 
 			if (wrote) {
 				this->blockMap[counter + i] = 1;
@@ -152,7 +152,7 @@ void FileSystem::appendToFile(string source, string destination) {
 		int blockNr = 0;
 		int size = 0;
 
-		for (size_t i = 0; i < destNode->getSize(); i++) {
+		for (int i = 0; i < destNode->getSize(); i++) {
 			blockMap[destNode->getBlockNr() + i] = 0;
 		}
 
@@ -199,6 +199,7 @@ int FileSystem::restoreFile(string path, string fileContent) {
 
 	if (blockNr >= 0) {
 		pathFolder->createNode(parsedPath[parsedPath.size() - 1], size, blockNr);
+		return 0;
 	}
 	else {
 		if (blockNr == -1) {
@@ -207,6 +208,8 @@ int FileSystem::restoreFile(string path, string fileContent) {
 		else if (blockNr == -2) {
 			cout << "Error: No free space available" << endl;
 		}
+
+		return -1;
 	}
 }
 
@@ -320,7 +323,7 @@ void FileSystem::removeFile(string path) {
 	folder = this->getFolderFromPath(parsedPath);
 
 	if (node != nullptr) {
-		for (size_t i = 0; i < node->getSize(); i++) {
+		for (int i = 0; i < node->getSize(); i++) {
 			this->blockMap[node->getBlockNr() + i] = 0;
 		}
 
@@ -403,7 +406,7 @@ void FileSystem::listDir() {
 	}
 
 	cout << "Files: " << endl;
-	for (int i = 0; i < nodes.size(); i++) {
+	for (size_t i = 0; i < nodes.size(); i++) {
 		cout << nodes[i]->getName() << endl;
 	}
 	//Get fileNames.
@@ -523,8 +526,6 @@ void FileSystem::restoreImage(string realFile) {
 	string str, line, path;
 	ifstream in;
 	vector<string> parsedPath;
-	int size;
-	int blockNr;
 
 	//Open file
 	in.open(realFile);
@@ -612,7 +613,7 @@ string FileSystem::getNodeString(Folder* folder) {
 
 //Format disk
 void FileSystem::formatDisk() {
-	for (size_t i = 0; i < this->memBlockSize; i++) {
+	for (int i = 0; i < this->memBlockSize; i++) {
 		this->blockMap[i] = 0;
 	}
 
