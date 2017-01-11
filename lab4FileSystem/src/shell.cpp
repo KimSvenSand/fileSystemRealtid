@@ -18,7 +18,6 @@ std::string help();
 void resetArr(std::string strArr[]);
 
 int main(void) {
-
 	std::string userCommand, commandArr[MAXCOMMANDS];
 	std::string user = "user@DV1492";    // Change this if you want another user to be displayed
 	std::string currentDir = "/";    // current directory, used for output
@@ -43,7 +42,6 @@ int main(void) {
                 break;
             case 1: // format
 				fileSystem.formatDisk();
-                // Call fileSystem.format()
                 break;
             case 2: // ls
                 std::cout << "Listing directory" << std::endl;
@@ -101,7 +99,7 @@ int main(void) {
         }
     } while (bRun == true);
 
-    return 0;
+	return 0;
 }
 
 void resetArr(std::string arr[]) {

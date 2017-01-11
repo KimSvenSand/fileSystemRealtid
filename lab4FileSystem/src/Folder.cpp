@@ -15,7 +15,13 @@ Folder::Folder(string name, Folder * parent){
 }
 
 Folder::~Folder(){
-	//No need to destroy vector objects
+	for (int i = 0; i < this->getnrOfFolders(); i++) {
+		delete this->folders[i];
+	}
+
+	for (int i = 0; i < this->getnrOfNodes(); i++) {
+		delete this->nodes[i];
+	}
 }
 
 void Folder::createFolder(string name){

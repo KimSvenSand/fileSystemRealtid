@@ -3,7 +3,7 @@
 FileSystem::FileSystem() {
 	//Initiate file system with one home folder that is it's own parent.
 	this->homeFolder = new Folder();
-	this->homeFolder->setName("/");
+	this->homeFolder->setName("");
 	this->homeFolder->setParent(this->homeFolder);
 	this->currentFolder = this->homeFolder;
 }
@@ -442,10 +442,6 @@ string FileSystem::getPathFromRoot(Folder* currentFolder) {
 		tmp = currentFolder->getParent();
 	}
 
-	if (path == "/") {
-		return "";
-	}
-
 	return path;
 }
 
@@ -593,7 +589,7 @@ string FileSystem::getFolderString(Folder* folder) {
 	return folderString;
 }
 
-//Recursive funktion getting all nodes: name and content.
+//Recursive function getting all nodes: name and content.
 string FileSystem::getNodeString(Folder* folder) {
 	string nodeString = "";
 	string tmpPath = "";
@@ -618,6 +614,9 @@ void FileSystem::formatDisk() {
 	}
 
 	delete this->homeFolder;
-	this->homeFolder = new Folder("/", this->homeFolder);
+
+	this->homeFolder = new Folder();
+	this->homeFolder->setName("");
+	this->homeFolder->setParent(this->homeFolder);
 	this->currentFolder = this->homeFolder;
 }
