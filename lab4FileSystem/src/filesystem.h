@@ -10,7 +10,7 @@ class FileSystem
 {
 private:
     MemBlockDevice mMemblockDevice;
-	int blockMap[250]; //For keeping track of free space
+	int blockMap[250] = {0}; //For keeping track of free space
 	int memBlockSize = 250; 
 	Folder * currentFolder;
 	Folder * homeFolder;

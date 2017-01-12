@@ -66,7 +66,7 @@ vector<Node*> Folder::getNodes() {
 
 //Get a folder by name. Returns nullptr if fails.
 Folder* Folder::getFolder(string name) {
-	for (int i = 0; i < folders.size(); i++) {
+	for (size_t i = 0; i < folders.size(); i++) {
 		if (folders[i]->getName() == name)
 		{
 			return folders[i];
@@ -77,7 +77,7 @@ Folder* Folder::getFolder(string name) {
 }
 
 Node* Folder::getNode(string name) {
-	for (int i = 0; i < nodes.size(); i++) {
+	for (size_t i = 0; i < nodes.size(); i++) {
 		if (nodes[i]->getName() == name) {
 			return nodes[i];
 		}
