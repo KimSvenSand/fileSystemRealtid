@@ -1,5 +1,13 @@
 folders:
-/hej/
-/hej/d„r/
-/tja/
+/folder1
+/folder1/childfolder
+/folder2
+
+nodes:
+/file1
+I'm file 1
+:q
+/folder1/file2
+I'm file2
+:q
 

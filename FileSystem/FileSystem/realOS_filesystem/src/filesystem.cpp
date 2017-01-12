@@ -105,8 +105,8 @@ int FileSystem::writeFile(string fileContent, int size) {
 	}
 
 	//Find free block space
-	while (!foundSpace && counter < 511) {
-		while (this->blockMap[counter] == 1 && counter < 511) {
+	while ((!foundSpace) && (counter < 512)) {
+		while ((this->blockMap[counter] == 1) && (counter < 512)) {
 			counter++;
 		}
 
@@ -337,7 +337,7 @@ void FileSystem::removeFile(string path) {
 //Check if there are available space.
 bool FileSystem::hasSpace(size_t start, size_t size, int blockMap[]) {
 	for (size_t i = 0; i < size; i++) {
-		if (start + i < 512) {
+		if ((start + i) < 512) {
 			if (blockMap[start + i] != 0) {
 				return false;
 			}
@@ -373,7 +373,6 @@ string FileSystem::getFileContent() {
 
 //mkdir <folderName>
 void FileSystem::createFolder(string path) {
-	bool pathFound = true;
 	Folder* pathFolder = this->currentFolder;
 	vector<string> parsedPath = this->parsePath(path);
 	string newFolder = parsedPath[parsedPath.size() - 1];
@@ -500,7 +499,6 @@ void FileSystem::printCurrentPath() {
 
 //Creates file with folder paths and nodes
 void FileSystem::createImage(string realFile) {
-	Folder* current = this->homeFolder;
 	ofstream out;
 
 	out.open(realFile);
